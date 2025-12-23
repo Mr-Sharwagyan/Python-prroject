@@ -1,37 +1,163 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<style>
+/* ===== Sidebar Categories ===== */
+.list-group {
+    background: #d8d6d6;
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.list-group-item {
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    padding: 12px 16px;
+    font-weight: 200;
+    color: #444;
+    background: #f8f9ff;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s ease;
+}
+
+/* Left accent bar */
+.list-group-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+    transform-origin: bottom;
+}
+
+.list-group-item:hover::before {
+    transform: scaleY(1);
+}
+
+.list-group-item:hover {
+    background: #ffffff;
+    color: #667eea;
+    transform: translateX(6px);
+    box-shadow: 0 6px 18px rgba(102,126,234,0.25);
+}
+
+/* Active / selected look */
+.list-group-item.active {
+    background: #ffffff;
+    color: #667eea;
+    box-shadow: 0 8px 22px rgba(102,126,234,0.3);
+}
+
+/* ===== Product Cards ===== */
+.card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: all 0.35s ease;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+}
+
+/* Image container */
+.card .item {
+    overflow: hidden;
+}
+
+.card-img-top {
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.1);
+}
+
+/* ===== Card Body ===== */
+.card-body {
+    text-align: center;
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 6px;
+}
+
+.card-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #667eea;
+}
+
+/* ===== Remove button look ===== */
+.card a.btn {
+    padding: 0;
+    border: none;
+}
+
+/* ===== Product grid spacing ===== */
+#product .row {
+    gap: 12px;
+}
+</style>
+
 <div class="container-fluid mt-3">
     <div class="row">
 
-        <div class="col-lg-3">
-            <div class = "list-group">
-                <a href="/" class="list-group-item list-group-item-action">All Products</a>
+        <!-- Category Sidebar -->
+        <div class="col-lg-2">
+            <div class="list-group">
+                <a href="/" class="list-group-item list-group-item-action">
+                    All Products
+                </a>
                 {% for category in category %}
-                <a href="/?category={{category.id}}" class="list-group-item list-group-item-action">{{category.name}}</a>
+                <a href="/?category={{ category.id }}"
+                   class="list-group-item list-group-item-action">
+                    {{ category.name }}
+                </a>
                 {% endfor %}
             </div>
-    
         </div>
-        <!---product-->
-        <div id="product" class="col-lg-9">
-            <div class="row mx-auto">
-        {% for product in product %}
 
-        <div class="card mx-auto mb-3" style="width: 18rem;">
-            <a href="{% url 'product-detail' product.id %}" class="btn">
-                <div class="item">
-                   <img src="{{product.image.url}}" class="card-img-top" alt="...">
+        <!-- Products -->
+        <div id="product" class="col-lg-10">
+            <div class="row mx-auto">
+
+                {% for product in product %}
+                <div class="card mx-auto mb-3" style="width: 18rem;">
+                    <a href="{% url 'product-detail' product.id %}" class="btn">
+                        <div class="item">
+                            <img src="{{ product.image.url }}"
+                                 class="card-img-top"
+                                 alt="{{ product.name }}">
+                        </div>
+                    </a>
+                    <div class="card-body">
+                        <h4 class="card-title">{{ product.name }}</h4>
+                        <h6 class="card-text">Rs. {{ product.price }}</h6>
+                    </div>
                 </div>
-            </a>
-            <div class="card-body">
-                <h4 class="card-title">{{product.name}}</h4>
-                <h6 class="card-text">Rs. {{product.price}}</h6>
+                {% endfor %}
+
             </div>
         </div>
-        {% endfor %}
-    </div>
-        </div>
+
     </div>
 </div>
+
 {% endblock %}
