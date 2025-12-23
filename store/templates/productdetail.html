@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Product Detail{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Product Image -->
+        <div class="col-md-6">
+            <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-md-6">
+            <h2 class="fw-bold">{{ product.name }}</h2>
+            <p class="text-muted">{{ product.category.name }}</p>
+            <h4 class="text-success">Rs.{{ product.price }}</h4>
+            <p>{{ product.description }}</p>
+
+            <form action="" class="btn-block">
+                {% csrf_token %}
+                <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_id">
+                <button type="submit" class="btn-danger shadow px-5 py-2 ms-4">Add to Cart</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

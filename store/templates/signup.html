@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Customer Signup{% endblock title %}
+{% block content %}
+
+<div class="container">
+    <div class="row my-5">
+        <div class="col-sm-6 offset-sm-3">
+            <h3 class="mb-4 text-center" style="color: orange; font-family: 'Franklin Gothic Medium';">Customer Signup</h3>
+
+            <form action="/signup" method="POST" class="shadow p-4 rounded">
+                {% if messages %}
+                {% for message in messages%}
+                <p {% if message.tags%} class="alert alert-{{message.tags}} mb-5" {% endif %}>{{message}}</p>
+                {% endfor %}
+                {% endif %}
+                {% csrf_token %}
+
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{error}}
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="name" value="{{value.name}}" class="form-control" placeholder="Enter name" >
+                </div>
+                 <div class="mb-3">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="text" name="phone" value="{{value.phone}}" class="form-control" placeholder="Enter mobile no." >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" value="{{value.email}}" class="form-control" placeholder="Enter email" >
+                </div>
+
+               
+
+               
+
+                <button type="submit" class="btn btn-secondary w-100">
+                    Sign Up
+                </button>
+                 <div class="text-center text-primary fw-bold">
+                    <small>Are you already Login to MachhabazaaR?</small>
+                    <a href="/login" class="text-danger">LogIn</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Customer LogIn{% endblock title %}
+{% block content %}
+
+<div class="container">
+    <div class="row my-5">
+        <div class="col-sm-6 offset-sm-3">
+            <h3 class="mb-4 text-center" style="color: orange; font-family: 'Franklin Gothic Medium';">Customer Login</h3>
+
+            <form action="/login" method="POST" class="shadow p-4 rounded">
+
+                {% csrf_token %}
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{error}}
+                </div>
+                {% endif %}
+
+                 <div class="mb-3">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="text" name="phone" value="{{value.phone}}" class="form-control" placeholder="Enter mobile no." >
+                </div>
+
+        
+                <button type="submit" class="btn btn-info w-100">
+                    Log In
+                </button>
+                 <div class="text-center text-primary fw-bold">
+                    <small>Are you new user to MachhabazaaR?</small>
+                    <a href="/signup" class="text-danger">LogIn</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
