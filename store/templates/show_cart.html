@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Cart{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h3 class="mb-4">🛒 My Cart</h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Image</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col" style="width: 120px;">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col" style="width: 100px;">Action</th>
+                </tr>
+            </thead>
+             <tbody>
+                
+                <tr>
+                    <td>
+                        <img src="{{product.image.url }}" width="70" height="70" class="rounded">
+                    </td>
+                    <td>{{product.name }}</td>
+                    <td>Rs. {{product.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>Rs. {{totalprice }}</td>
+                    <td><input type="button" class="minus-cart btn" value="-"></td>
+                    <td><span id="quantity">3</span></td>
+                    <td><input type="button" class="plus-cart btn" value="+"></td>
+                    <td><input type="button" class="btn btn-warning btn-sm Remove-cart" value="Remove"></td>
+                </tr>
+               
+            </tbody>
+             </table>
+    </div>
+
+    <!-- <div class="d-flex justify-content-end mt-3">
+        <h5>Total Amount: <strong>Rs. {{ grand_total }}</strong></h5>
+    </div> -->
+
+    <div class="d-flex justify-content-end mt-2">
+        <a href="" class="btn btn-success px-5 py-2">Proceed to Checkout</a>
+    </div>
+
+   
+    <div class="alert alert-info text-center my-5">
+        Your cart is empty 🐟
+    </div>
+   
+</div>
+           
+       
+
+{% endblock %}
