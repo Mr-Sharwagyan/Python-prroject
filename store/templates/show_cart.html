@@ -8,53 +8,84 @@
 <div class="container mt-5">
     <h3 class="mb-4">🛒 My Cart</h3>
 
+    {% if cart %}
     <div class="table-responsive">
         <table class="table table-bordered align-middle text-center">
             <thead class="table-light">
                 <tr>
-                    <th scope="col">Image</th>
-                    <th scope="col">Product Name</th>
-                    <th scope="col">Price</th>
-                    <th scope="col" style="width: 120px;">Quantity</th>
-                    <th scope="col">Total</th>
-                    <th scope="col" style="width: 100px;">Action</th>
+                    <th>SN</th>
+                    <th>Image</th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th width="160">Quantity</th>
+                    <th>Action</th>
                 </tr>
             </thead>
-             <tbody>
-                
+
+            <tbody>
+            {% for item in cart %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>
+
                     <td>
-                        <img src="{{product.image.url }}" width="70" height="70" class="rounded">
+                        <img src="{{ item.product.image.url }}"
+                             width="70" height="70" class="rounded">
                     </td>
-                    <td>{{product.name }}</td>
-                    <td>Rs. {{product.price }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>Rs. {{totalprice }}</td>
-                    <td><input type="button" class="minus-cart btn" value="-"></td>
-                    <td><span id="quantity">3</span></td>
-                    <td><input type="button" class="plus-cart btn" value="+"></td>
-                    <td><input type="button" class="btn btn-warning btn-sm Remove-cart" value="Remove"></td>
+
+                    <td>{{ item.product.name }}</td>
+                    <td>Rs. {{ item.product.price }}</td>
+
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'plus_cart' item.product.id '+' %}">
+                            <input type="button" pid="{{item.product.id}}" class="minus-cart btn btn-primary btn-sm" value="+">
+                            </a>
+                            <span class="btn btn-light btn-sm" id="quantity">{{item.quantity}}</span>
+                            <a href="{% url 'plus_cart' item.product.id '-' %}">
+                            <input type="button" pid="{{item.product.id}}" class="plus-cart btn btn-primary btn-sm" value="-">
+                            </a>
+                        </div>
+                    </td>
+
+                    <td>
+                        <input type="button" 
+                               pid ="{{item.product.id}}"
+                               class="btn btn-danger btn-sm remove-cart" 
+                               value="Remove">
+                    </td>
                 </tr>
-               
+            {% endfor %}
             </tbody>
-             </table>
+        </table>
     </div>
+    <div class="d-flex justify-content-end mt-2"> 
+        <a href="" class="btn btn-success px-5 py-2">Proceed to Checkout</a> </div>
 
-    <!-- <div class="d-flex justify-content-end mt-3">
-        <h5>Total Amount: <strong>Rs. {{ grand_total }}</strong></h5>
-    </div> -->
-
-    <div class="d-flex justify-content-end mt-2">
-        <a href="" class="btn btn-success px-5 py-2">Proceed to Checkout</a>
-    </div>
-
-   
-    <div class="alert alert-info text-center my-5">
-        Your cart is empty 🐟
-    </div>
-   
+    {% else %}
+        <div class="alert alert-info text-center">
+            Your cart is empty 🐟
+        </div>
+    {% endif %}
 </div>
-           
-       
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).on('click', '.remove-cart', function () {
+    var pid = $(this).attr("pid");
+    var row = $(this).closest("tr");
+
+    $.ajax({
+        url: "{% url 'remove_cart' %}",
+        type: "GET",
+        data: { prod_id: pid },
+        success: function () {
+            row.fadeOut(300, function () {
+                $(this).remove();
+            });
+        }
+    });
+});
+</script>
+
 
 {% endblock %}

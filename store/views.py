@@ -10,32 +10,41 @@ from .models.cart import Cart
 
 
 from django.db.models import Q
+from django.http import JsonResponse
 # Create your views here.
 
 def home(request):
-    products= None
-    totalitem=0
+    totalitem = 0
+    name=""
     if request.session.has_key('phone'):
-        phone= request.session["phone"]
-        category=Category.get_all_categories()
-        customer=Customer.objects.filter(phone=phone)
-        totalitem=len(Cart.objects.filter(phone=phone))
-        for c in customer:
-            name=c.name
-            categoryID=request.GET.get('category')
-            if categoryID:
-                products=Product.get_all_product_by_category_id(categoryID)
-            else:
-                products = Product.get_all_products()
+        phone = request.session["phone"]
 
-                data={}
-                data['name']=name
-                data['product']=products
-                data['category']=category
-                data['totalitem']=totalitem
-                return render(request,'home.html',data)
+        category = Category.get_all_categories()
+        customer = Customer.objects.filter(phone=phone)
+        totalitem = len(Cart.objects.filter(phone=phone))
+
+        categoryID = request.GET.get('category')
+
+        if categoryID:
+            products = Product.get_all_product_by_category_id(categoryID)
+        else:
+            products = Product.get_all_products()
+
+        for c in customer:
+            name = c.name
+
+        data = {
+            'name': name,
+            'product': products,
+            'category': category,
+            'totalitem': totalitem
+        }
+
+        return render(request, 'home.html', data)
+
     else:
         return redirect('login')
+
         
 class Signup(View):
     def get(self,request):
@@ -135,5 +144,56 @@ def add_to_cart(request):
         Cart(phone=phone,product=product_name,image=image,price=price).save()
         return redirect(f"/product-detail/{product_id}")
     
+
 def show_cart(request):
-    return render(request,'show_cart.html')
+    if request.session.has_key('phone'):
+        phone = request.session['phone']
+
+        totalitem = Cart.objects.filter(phone=phone).count()
+        cart = Cart.objects.filter(phone=phone)   # ✅ define once
+
+        customer = Customer.objects.filter(phone=phone)
+        name = ""
+        for c in customer:
+            name = c.name
+
+        data = {
+            'name': name,
+            'cart': cart,
+            'totalitem': totalitem
+        }
+
+        # ✅ ALWAYS render
+        return render(request, 'show_cart.html', data)
+
+    return redirect('login')
+
+
+
+
+
+def plus_cart(request,product_id,op):
+    if request.session.has_key('phone'):
+        phone = request.session["phone"]
+        print(product_id)
+        cart = Cart.objects.get(Q(product=product_id) & Q(phone=phone))
+        if op == '+':
+
+            cart.quantity += 1
+            cart.save()
+        else:
+            if cart.quantity > 0:
+                cart.quantity -= 1
+                cart.save()
+            
+        return redirect('show_cart')
+def remove_cart(request):
+    if request.session.has_key('phone'):
+        phone = request.session['phone']
+        prod_id = request.GET.get('prod_id')
+
+        Cart.objects.get(
+            Q(product__id=prod_id) & Q(phone=phone)
+        ).delete()
+
+        return JsonResponse({'status': 'success'})
