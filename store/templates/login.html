@@ -1,13 +1,108 @@
 {% extends 'base.html' %}
 {% block title %}Customer LogIn{% endblock title %}
 {% block content %}
+<style>
+/* ===== GLOBAL BACKGROUND ===== */
+body {
+    background: linear-gradient(135deg, #e0f7fa, #fff3e0);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ===== LOGIN CARD ===== */
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(6px);
+    transition: all 0.35s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 28px 55px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== TITLE ===== */
+.login-title {
+    color: #ff9800;
+    font-family: 'Franklin Gothic Medium';
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+/* ===== LABEL ===== */
+.form-label {
+    font-weight: 600;
+    color: #37474f;
+}
+
+/* ===== INPUT FIELD ===== */
+.form-control {
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 1px solid #b0bec5;
+    font-size: 15px;
+}
+
+.form-control::placeholder {
+    color: #90a4ae;
+}
+
+.form-control:focus {
+    border-color: #0dcaf0;
+    box-shadow: 0 0 0 0.18rem rgba(13, 202, 240, 0.35);
+}
+
+/* ===== LOGIN BUTTON ===== */
+.btn-info {
+    background: linear-gradient(135deg, #0dcaf0, #0097a7);
+    border: none;
+    border-radius: 14px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #0097a7, #0dcaf0);
+    transform: scale(1.03);
+}
+
+/* ===== ERROR ALERT ===== */
+.alert-danger {
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+/* ===== SIGNUP TEXT ===== */
+.signup-text {
+    margin-top: 18px;
+}
+
+.signup-text small {
+    color: #455a64;
+}
+
+.signup-text a {
+    color: #ff5722;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.signup-text a:hover {
+    text-decoration: underline;
+}
+</style>
+
 
 <div class="container">
     <div class="row my-5">
         <div class="col-sm-6 offset-sm-3">
-            <h3 class="mb-4 text-center" style="color: orange; font-family: 'Franklin Gothic Medium';">Customer Login</h3>
+            <h3 class="mb-4 text-center login-title">Customer Login</h3>
 
-            <form action="/login" method="POST" class="shadow p-4 rounded">
+            <form action="/login" method="POST" class="login-card p-4">
 
                 {% csrf_token %}
                 {% if error %}
@@ -16,16 +111,16 @@
                 </div>
                 {% endif %}
 
-                 <div class="mb-3">
+                <div class="mb-3">
                     <label class="form-label">Mobile Number</label>
-                    <input type="text" name="phone" value="{{value.phone}}" class="form-control" placeholder="Enter mobile no." >
+                    <input type="text" name="phone" value="{{value.phone}}" class="form-control" placeholder="Enter mobile no.">
                 </div>
 
-        
                 <button type="submit" class="btn btn-info w-100">
                     Log In
                 </button>
-                 <div class="text-center text-primary fw-bold">
+
+                <div class="text-center text-primary fw-bold signup-text">
                     <small>Are you new user to MachhabazaaR?</small>
                     <a href="/signup" class="text-danger">Signup</a>
                 </div>
@@ -35,4 +130,3 @@
 </div>
 
 {% endblock %}
-

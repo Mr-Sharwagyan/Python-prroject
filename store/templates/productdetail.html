@@ -2,35 +2,148 @@
 {% block title %}Product Detail{% endblock %}
 
 {% block content %}
+<style>
+/* ===== NAVBAR (MATCHED TO HOME) ===== */
+.navbar {
+    position: sticky;
+    top: 12px;
+    width: 94%;
+    margin: auto;
+    border-radius: 22px;
+    background: rgba(30,30,35,0.75) !important;
+    backdrop-filter: blur(18px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.3);
+    padding: 14px 24px;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #ffd166 !important;
+    letter-spacing: 1px;
+    text-shadow: 0 0 12px rgba(255,209,102,0.7);
+}
+
+.nav-link {
+    color: #ffffff !important;
+    font-weight: 600;
+    margin: 0 10px;
+    position: relative;
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ffd166, #ff9f1c);
+    transition: 0.35s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Added these to match the Home Navbar styling */
+.navbar input {
+    border-radius: 18px !important;
+}
+
+/* The Search Button Gradient from Image 1 */
+.navbar .btn-outline-success, 
+.navbar button[type="submit"] {
+    background: linear-gradient(135deg, #ffd166, #ff8a71) !important;
+    border: none !important;
+    border-radius: 18px !important;
+    color: white !important;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(255, 138, 113, 0.4);
+}
+
+/* The Cart Badge Glow from Image 1 */
+.badge.bg-danger {
+    background: linear-gradient(135deg, #ff7e5f, #feb47b) !important;
+    box-shadow: 0 0 10px rgba(255, 126, 95, 0.6);
+    border-radius: 50%;
+}
+/* ===== PRODUCT INFO ===== */
+h2 {
+    font-family: 'Georgia', serif;
+    font-weight: 700;
+    color: #ff6f3c;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+p.text-muted {
+    font-style: italic;
+    color: #6b5b4f;
+}
+
+h4.text-success {
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #ff4500;
+    margin-bottom: 20px;
+}
+
+
+.btn-warning:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px rgba(247, 121, 125, 0.6);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    h2 {
+        font-size: 1.8rem;
+    }
+    h4.text-success {
+        font-size: 1.4rem;
+    }
+    .btn-danger, .btn-warning {
+        width: 100%;
+        text-align: center;
+        margin-top: 15px;
+    }
+}
+</style>
+
+
+
 <div class="container my-5">
     <div class="row">
         <!-- Product Image -->
-        <div class="col-md-6">
+        <div class="col-md-6 mb-4 mb-md-0">
             <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
         </div>
 
         <!-- Product Info -->
-        <div class="col-md-6">
+        <div class="col-md-6 d-flex flex-column justify-content-center">
             <h2 class="fw-bold">{{ product.name }}</h2>
             <p class="text-muted">{{ product.category.name }}</p>
             <h4 class="text-success">Rs.{{ product.price }}</h4>
             <p>{{ product.description }}</p>
 
             {% if request.session %}
-            {% if item_already_in_cart %}
-            <a href="/show_cart" class="btn btn-warning shadow px-5 py-2 ms-4">Go to Cart</a>
-            {% else %}
-
-            <form action="/add_to_cart" class="btn-block">
-                {% csrf_token %}
-                <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_id">
-                <button type="submit" class="btn-danger shadow px-5 py-2 ms-4">Add to Cart</button>
-
-            </form>
-            {% endif %}
+                {% if item_already_in_cart %}
+                    <a href="/show_cart" class="btn btn-warning shadow px-5 py-2 ms-4">Go to Cart</a>
+                {% else %}
+                    <form action="/add_to_cart" class="btn-block">
+                        {% csrf_token %}
+                        <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_id">
+                        <button type="submit" class="btn-danger shadow px-5 py-2 ms-4">Add to Cart</button>
+                    </form>
+                {% endif %}
             {% endif %}
         </div>
     </div>
 </div>
 {% endblock %}
-

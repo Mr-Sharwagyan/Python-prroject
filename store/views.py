@@ -163,10 +163,10 @@ def show_cart(request):
             'totalitem': totalitem
         }
 
-        # ✅ ALWAYS render
-        return render(request, 'show_cart.html', data)
-
-    return redirect('login')
+        if cart:
+            return render(request, 'show_cart.html', data)
+        else:
+            return render(request,'empty_cart.html',data)
 
 
 
@@ -188,12 +188,17 @@ def plus_cart(request,product_id,op):
             
         return redirect('show_cart')
 def remove_cart(request):
-    if request.session.has_key('phone'):
+    if request.session.get('phone'):
         phone = request.session['phone']
         prod_id = request.GET.get('prod_id')
 
-        Cart.objects.get(
-            Q(product__id=prod_id) & Q(phone=phone)
-        ).delete()
+        # Delete all matching cart items safely
+        Cart.objects.filter(Q(product__id=prod_id) & Q(phone=phone)).delete()
 
-        return JsonResponse({'status': 'success'})
+        # Check if cart is now empty
+        if Cart.objects.filter(phone=phone).exists():
+            return JsonResponse({'status': 'success'})
+        else:
+            return JsonResponse({'status': 'empty'})  # Cart is empty
+    
+    return JsonResponse({'status': 'fail', 'message': 'User not logged in'})

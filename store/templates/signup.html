@@ -1,48 +1,142 @@
 {% extends 'base.html' %}
 {% block title %}Customer Signup{% endblock title %}
+
 {% block content %}
+
+<style>
+/* ===== SOFT ARTISTIC BACKGROUND ===== */
+body {
+    background: linear-gradient(135deg, #e3f2fd, #fff8e1);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ===== SIGNUP CARD ===== */
+.signup-card {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(6px);
+    transition: all 0.35s ease;
+}
+
+.signup-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 35px 65px rgba(0, 0, 0, 0.28);
+}
+
+/* ===== TITLE ===== */
+.signup-title {
+    color: #ff9800;
+    font-family: 'Franklin Gothic Medium';
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+}
+
+/* ===== LABEL ===== */
+.form-label {
+    font-weight: 600;
+    color: #37474f;
+}
+
+/* ===== INPUT FIELDS ===== */
+.form-control {
+    border-radius: 14px;
+    padding: 12px 16px;
+    border: 1px solid #b0bec5;
+    font-size: 15px;
+}
+
+.form-control::placeholder {
+    color: #90a4ae;
+}
+
+.form-control:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 0.2rem rgba(255, 152, 0, 0.35);
+}
+
+/* ===== SIGNUP BUTTON ===== */
+.btn-secondary {
+    background: linear-gradient(135deg, #ff9800, #ff6f00);
+    border: none;
+    border-radius: 16px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #ff6f00, #ff9800);
+    transform: scale(1.04);
+}
+
+/* ===== ALERTS ===== */
+.alert {
+    border-radius: 14px;
+    font-size: 14px;
+}
+
+/* ===== LOGIN LINK ===== */
+.signup-text {
+    margin-top: 18px;
+}
+
+.signup-text small {
+    color: #455a64;
+}
+
+.signup-text a {
+    color: #e53935;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.signup-text a:hover {
+    text-decoration: underline;
+}
+</style>
 
 <div class="container">
     <div class="row my-5">
         <div class="col-sm-6 offset-sm-3">
-            <h3 class="mb-4 text-center" style="color: orange; font-family: 'Franklin Gothic Medium';">Customer Signup</h3>
+            <h3 class="mb-4 text-center signup-title">Customer Signup</h3>
 
-            <form action="/signup" method="POST" class="shadow p-4 rounded">
+            <form action="/signup" method="POST" class="signup-card p-4 rounded">
                 {% if messages %}
-                {% for message in messages%}
-                <p {% if message.tags%} class="alert alert-{{message.tags}} mb-5" {% endif %}>{{message}}</p>
+                {% for message in messages %}
+                <p {% if message.tags %} class="alert alert-{{ message.tags }} mb-5" {% endif %}>{{ message }}</p>
                 {% endfor %}
                 {% endif %}
                 {% csrf_token %}
 
                 {% if error %}
                 <div class="alert alert-danger" role="alert">
-                    {{error}}
+                    {{ error }}
                 </div>
                 {% endif %}
 
                 <div class="mb-3">
                     <label class="form-label">Username</label>
-                    <input type="text" name="name" value="{{value.name}}" class="form-control" placeholder="Enter name" >
+                    <input type="text" name="name" value="{{ value.name }}" class="form-control" placeholder="Enter name">
                 </div>
-                 <div class="mb-3">
+
+                <div class="mb-3">
                     <label class="form-label">Mobile Number</label>
-                    <input type="text" name="phone" value="{{value.phone}}" class="form-control" placeholder="Enter mobile no." >
+                    <input type="text" name="phone" value="{{ value.phone }}" class="form-control" placeholder="Enter mobile no.">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" name="email" value="{{value.email}}" class="form-control" placeholder="Enter email" >
+                    <input type="email" name="email" value="{{ value.email }}" class="form-control" placeholder="Enter email">
                 </div>
-
-               
-
-               
 
                 <button type="submit" class="btn btn-secondary w-100">
                     Sign Up
                 </button>
-                 <div class="text-center text-primary fw-bold">
+
+                <div class="text-center fw-bold signup-text">
                     <small>Are you already Login to MachhabazaaR?</small>
                     <a href="/login" class="text-danger">LogIn</a>
                 </div>
@@ -52,4 +146,3 @@
 </div>
 
 {% endblock %}
-
