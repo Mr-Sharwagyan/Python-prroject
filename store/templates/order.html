@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="border rounded p-4">
+        <h2 class="mb-4">Your Orders</h2>
+        <hr>
+          <form action="{% url 'clear-orders' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger mb-3">
+                        Clear All Orders
+                    </button>
+                </form>
+        <table class="table table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>S.N.</th>
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>Order Date</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+  
+                {% for order in order %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><img style="height:70px;" class="rounded circle" src="{{order.image.url}}"></td>
+                    <td>{{order.product_name }}</td>
+                    <td>{{order.ordered_date }}</td>
+                    <td>{{order.quantity }}</td>
+                    <td>Rs.{{order.price }}</td>
+                    <td>{{order.status }}</td>
+                    
+                </tr>
+                {% empty %}
+              
+                <tr>
+                    <td colspan="7" class="text-center">You have no orders yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<style>
+    /* Optional: Custom badge colors if not using Bootstrap defaults */
+    .bg-success { background-color: #4caf50 !important; color: #fff; }
+    .bg-primary { background-color: #2196f3 !important; color: #fff; }
+    .bg-warning { background-color: #ff9800 !important; color: #fff; }
+    .bg-secondary { background-color: #9c27b0 !important; color: #fff; }
+    .bg-danger { background-color: #f44336 !important; color: #fff; }
+</style>
+{% endblock %}

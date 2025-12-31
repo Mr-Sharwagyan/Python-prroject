@@ -7,7 +7,7 @@ from .models.product import Product
 from .models.category import Category
 from .models.customer import Customer
 from .models.cart import Cart
-
+from .models.order import OrderDetail
 
 from django.db.models import Q
 from django.http import JsonResponse
@@ -70,7 +70,7 @@ class Signup(View):
             error_message="Name is required"
         elif(not phone):
             error_message="Mobile Number is required"
-        elif(len(phone))<10:
+        elif(len(phone)<10 or len(phone))>10:
             error_message="Mobile number must consists of 10 numbers"
         elif customer.isExist():
             error_message="Mobile number already exist"
@@ -124,6 +124,8 @@ def productdetail(request,pk):
               'totalitem':totalitem}
 
         return render(request,'productdetail.html', data)
+    else:
+        return redirect('login')
 
 
 def logout(request):
@@ -150,7 +152,7 @@ def show_cart(request):
         phone = request.session['phone']
 
         totalitem = Cart.objects.filter(phone=phone).count()
-        cart = Cart.objects.filter(phone=phone)   # ✅ define once
+        cart = Cart.objects.filter(phone=phone)  
 
         customer = Customer.objects.filter(phone=phone)
         name = ""
@@ -167,7 +169,8 @@ def show_cart(request):
             return render(request, 'show_cart.html', data)
         else:
             return render(request,'empty_cart.html',data)
-
+    else:
+        return redirect('login')
 
 
 
@@ -177,28 +180,151 @@ def plus_cart(request,product_id,op):
         phone = request.session["phone"]
         print(product_id)
         cart = Cart.objects.get(Q(product=product_id) & Q(phone=phone))
-        if op == '+':
-
-            cart.quantity += 1
-            cart.save()
-        else:
+        if op == '-':
             if cart.quantity > 0:
                 cart.quantity -= 1
                 cart.save()
+        else:
+            
+                cart.quantity += 1
+                cart.save()
             
         return redirect('show_cart')
+from django.http import JsonResponse
+from django.db.models import Q
+from .models import Cart
+
 def remove_cart(request):
-    if request.session.get('phone'):
+    if not request.session.get('phone'):
+        return JsonResponse({'status': 'fail', 'message': 'User not logged in'})
+
+    phone = request.session['phone']
+    prod_id = request.GET.get('prod_id')
+
+    # Remove product from cart
+    Cart.objects.filter(
+        Q(product__id=prod_id) & Q(phone=phone)
+    ).delete()
+
+    # Check cart status
+    cart_count = Cart.objects.filter(phone=phone).count()
+
+    if cart_count == 0:
+        return JsonResponse({
+            'status': 'empty',
+            'cart_count': 0
+        })
+
+    return JsonResponse({
+        'status': 'success',
+        'cart_count': cart_count
+    })
+
+
+
+def offers(request):
+    offer_products = Product.objects.filter(category__name="Offer")
+
+    data = {
+        'products': offer_products
+    }
+
+    if request.session.has_key('phone'):
         phone = request.session['phone']
-        prod_id = request.GET.get('prod_id')
 
-        # Delete all matching cart items safely
-        Cart.objects.filter(Q(product__id=prod_id) & Q(phone=phone)).delete()
+        totalitem = Cart.objects.filter(phone=phone).count()
+        cart = Cart.objects.filter(phone=phone)
 
-        # Check if cart is now empty
-        if Cart.objects.filter(phone=phone).exists():
-            return JsonResponse({'status': 'success'})
-        else:
-            return JsonResponse({'status': 'empty'})  # Cart is empty
+        customer = Customer.objects.filter(phone=phone)
+        name = ""
+        for c in customer:
+            name = c.name
+
+        # add cart-related data
+        data.update({
+            'name': name,
+            'cart': cart,
+            'totalitem': totalitem
+        })
+
+        return render(request, "offers.html", data)
+    else:
+        return redirect('login')
+
+def checkout(request): 
+    totalitem=0 
+    if request.session.has_key('phone'): 
+        phone = request.session["phone"] 
+        name=request.POST.get('name') 
+        address=request.POST.get('address') 
+        mobile=request.POST.get('mobile') 
+        cart_product=Cart.objects.filter(phone=phone) 
+        for c in cart_product: 
+            quantity=c.quantity 
+            price=c.price 
+            product_name=c.product 
+            image=c.image 
+            OrderDetail(user=phone,product_name=product_name,image=image,quantity=quantity,price=price).save() 
+            cart_product.delete() 
+            totalitem=len(Cart.objects.filter(phone=phone)) 
+            customer = Customer.objects.filter(phone=phone) 
+            for c in customer: name=c.name 
+            data={ 'name':name, 
+                  'totalitem':totalitem, 
+                  'success_message': "🐟 Your order has been successfully placed! Thank you for shopping with us." 
+                  } 
+        return render(request,'empty_cart.html',data) 
+    else: 
+        return redirect('login')
     
-    return JsonResponse({'status': 'fail', 'message': 'User not logged in'})
+
+def order(request):
+    totalitem=0
+    if request.session.has_key('phone'):
+        phone = request.session["phone"]
+        totalitem=len(Cart.objects.filter(phone=phone))
+        customer = Customer.objects.filter(phone=phone)
+        for c in customer:
+            name=c.name
+            order=OrderDetail.objects.filter(user=phone)
+            data={
+            'order':order,
+            'name':name,
+            'totalitem':totalitem
+            }
+           
+            if order:
+                return render (request,'order.html',data)
+            else:
+                return render(request, 'emptyorder.html',data)
+    
+    else:
+        return redirect('login')
+    
+def search(request):
+    totalitem=0
+    if request.session.has_key('phone'):
+        phone = request.session["phone"]
+        query=request.GET.get('query')
+        search=Product.objects.filter(name__icontains=query)
+        category=Category.get_all_categories()
+        totalitem=len(Cart.objects.filter(phone=phone))
+        customer = Customer.objects.filter(phone=phone)
+        for c in customer:
+            name=c.name
+        data={
+                'name':name,
+                'totalitem':totalitem,
+                'search':search,
+                'category':category,
+                'query':query
+            }
+        return render(request,'search.html',data)
+    else:
+        return redirect('login')
+    
+def clear_orders(request):
+    if request.session.has_key('phone'):
+        phone = request.session["phone"]
+        OrderDetail.objects.filter(user=phone).delete()
+    return redirect('order') 

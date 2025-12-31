@@ -96,6 +96,47 @@ body {
 .signup-text a:hover {
     text-decoration: underline;
 }
+/* ===== SOCIAL LOGIN ===== */
+.social-login {
+    margin-top: 22px;
+    text-align: center;
+}
+
+.social-login p {
+    color: #546e7a;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+.social-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.social-btn:hover {
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+/* Brand Colors */
+.facebook { background: #1877f2; }
+.google { background: #ffffff; }
+.twitter { background: #1da1f2; }
+
 </style>
 
 <div class="container">
@@ -135,6 +176,27 @@ body {
                 <button type="submit" class="btn btn-secondary w-100">
                     Sign Up
                 </button>
+                <div class="social-login">
+                    <p>— Or sign up with —</p>
+                    <div class="social-icons">
+                        <a href="#" class="social-btn facebook" title="Sign up with Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-btn google" title="Sign up with Google">
+                            <svg width="18" height="18" viewBox="0 0 533.5 544.3">
+                                <path fill="#4285F4" d="M533.5 278.4c0-17.3-1.6-34-4.6-50.4H272v95.4h146.9c-6.3 33.6-25 62-53.1 81.1v67.3h85.8c50.1-46.2 79.9-114.1 79.9-193.4z"/>
+                                <path fill="#34A853" d="M272 544.3c72.3 0 132.9-23.8 177.2-64.7l-85.8-67.3c-23.8 16-54.3 25.5-91.4 25.5-70.3 0-129.9-47.5-151.2-111.5h-89.5v69.9C76.7 474.5 167 544.3 272 544.3z"/>
+                                <path fill="#FBBC05" d="M120.8 331.3c-5.3-16-8.3-33-8.3-50.3s3-34.3 8.3-50.3v-69.9h-89.5C16.8 198.5 0 243.8 0 278.4s16.8 79.9 31.3 118.6l89.5-65.7z"/>
+                                <path fill="#EA4335" d="M272 107.7c38.8 0 73.6 13.4 101.1 39.6l75.6-75.6C404.9 24.8 344.3 0 272 0 167 0 76.7 69.8 31.3 174.4l89.5 69.9c21.3-64 80.9-111.5 151.2-111.5z"/>
+                            </svg>
+                        </a>
+
+                        <a href="#" class="social-btn twitter" title="Sign up with Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+
 
                 <div class="text-center fw-bold signup-text">
                     <small>Are you already Login to MachhabazaaR?</small>
