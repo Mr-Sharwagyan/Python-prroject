@@ -152,7 +152,7 @@ def show_cart(request):
         phone = request.session['phone']
 
         totalitem = Cart.objects.filter(phone=phone).count()
-        cart = Cart.objects.filter(phone=phone)  
+        cart = Cart.objects.filter(phone=phone).order_by('id')
 
         customer = Customer.objects.filter(phone=phone)
         name = ""
@@ -268,7 +268,8 @@ def checkout(request):
             cart_product.delete() 
             totalitem=len(Cart.objects.filter(phone=phone)) 
             customer = Customer.objects.filter(phone=phone) 
-            for c in customer: name=c.name 
+            for c in customer: 
+                name=c.name 
             data={ 'name':name, 
                   'totalitem':totalitem, 
                   'success_message': "🐟 Your order has been successfully placed! Thank you for shopping with us." 
@@ -305,7 +306,7 @@ def search(request):
     totalitem=0
     if request.session.has_key('phone'):
         phone = request.session["phone"]
-        query=request.GET.get('query')
+        query=request.GET.get('query','')
         search=Product.objects.filter(name__icontains=query)
         category=Category.get_all_categories()
         totalitem=len(Cart.objects.filter(phone=phone))
@@ -328,3 +329,25 @@ def clear_orders(request):
         phone = request.session["phone"]
         OrderDetail.objects.filter(user=phone).delete()
     return redirect('order') 
+
+def about(request):
+    totalitem=0
+    if request.session.has_key('phone'):
+        phone = request.session["phone"]
+        query=request.GET.get('query','')
+        search=Product.objects.filter(name__icontains=query)
+        category=Category.get_all_categories()
+        totalitem=len(Cart.objects.filter(phone=phone))
+        customer = Customer.objects.filter(phone=phone)
+        for c in customer:
+            name=c.name
+        data={
+                'name':name,
+                'totalitem':totalitem,
+                'search':search,
+                'category':category,
+                'query':query
+            }
+        return render(request,'about.html',data)
+    else:
+        return redirect('login')
