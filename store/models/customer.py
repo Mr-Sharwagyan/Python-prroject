@@ -3,6 +3,7 @@ class Customer(models.Model):
     name=models.CharField(max_length=50)
     phone=models.CharField(max_length=15)
     email=models.CharField(max_length=35)
+    password = models.CharField(max_length=255)
    
     def register(self):
         self.save()

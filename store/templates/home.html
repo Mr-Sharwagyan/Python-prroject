@@ -43,7 +43,11 @@ body {
     border: none;
     margin-top: 20px;
 }
-
+.btn-shop-now:hover {
+    background: #003D29; 
+    color: red;
+    transform: scale(1.05); 
+}
 .hero-image img {
     max-width: 280px;
 }
@@ -148,7 +152,7 @@ body {
         <div class="hero-text">
             <h1>Find Your Next <br> Fish Pet</h1>
             <p>Healthy, active & premium quality fish for your Aquarium!</p>
-            <a href="/" class="btn btn-shop-now">Shop Now</a>
+            <a href="{% url 'offers' %}" class="btn btn-shop-now">Shop Now</a>
         </div>
         <div class="hero-image d-none d-md-block">
             <img src="{% static 'images/fish-hero.png' %}" style="mix-blend-mode: multiply;" alt="Fish">

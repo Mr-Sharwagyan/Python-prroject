@@ -9,6 +9,9 @@ from .models.customer import Customer
 from .models.cart import Cart
 from .models.order import OrderDetail
 
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import make_password
+
 from django.db.models import Q
 from django.http import JsonResponse
 # Create your views here.
@@ -45,67 +48,93 @@ def home(request):
     else:
         return redirect('login')
 
-        
 class Signup(View):
-    def get(self,request):
-       return render(request, 'signup.html')
-    def post(self,request):
-        postData=request.POST
-        name=postData.get('name')
-        phone=postData.get('phone')
-        email=postData.get('email')
+    def get(self, request):
+        return render(request, 'signup.html')
+
+    def post(self, request):
+        postData = request.POST
+
+        name = postData.get('name')
+        phone = postData.get('phone')
+        email = postData.get('email')
+        password = postData.get('password')
 
         error_message = None
 
-        value={
-            'phone':phone,
-            'name':name,
-            'email':email
+        value = {
+            'phone': phone,
+            'name': name,
+            'email': email
         }
-        customer=Customer(name=name,
-                          phone=phone,
-                          email=email)
-        
-        if(not name):
-            error_message="Name is required"
-        elif(not phone):
-            error_message="Mobile Number is required"
-        elif(len(phone)<10 or len(phone))>10:
-            error_message="Mobile number must consists of 10 numbers"
-        elif customer.isExist():
-            error_message="Mobile number already exist"
-        elif(not email):
-            error_message="Email is required"
-        
 
+        customer = Customer(
+            name=name,
+            phone=phone,
+            email=email,
+            password=make_password(password)  
+        )
+
+        # ===== VALIDATIONS =====
+        if not name:
+            error_message = "Name is required"
+        elif not phone:
+            error_message = "Mobile number is required"
+        elif len(phone) != 10:
+            error_message = "Mobile number must be 10 digits"
+        elif customer.isExist():
+            error_message = "Mobile number already exists"
+        elif not email:
+            error_message = "Email is required"
+        elif not password:
+            error_message = "Password is required"
+        elif len(password) < 6:
+            error_message = "Password must be at least 6 characters"
+
+        # ===== SAVE OR RETURN ERROR =====
         if not error_message:
-            messages.success(request,'Registered Sucessfully!!!')
-            customer.register()
-            return redirect('signup')
+            customer.save()
+            messages.success(request, "Registered successfully!")
+            return redirect('login')   # better UX → go to login
         else:
-            data={
-                'error':error_message,
-                'value':value
+            data = {
+                'error': error_message,
+                'value': value
             }
-            return render(request,'signup.html',data)
+            return render(request, 'signup.html', data)
+
 
 class Login(View):
-    def get(self,request):
+    def get(self, request):
         return render(request, 'login.html')
-    def post(self,request):
-        phone=request.POST.get('phone')
-        error_message=None
-        value={'phone':phone}
-        customer=Customer.objects.filter(phone=request.POST["phone"])
-        if customer:
-            request.session['phone']=phone
-            return redirect("homepage")
-        else:
-            error_message="Mobile number is invalid!!!"
-            data={'error':error_message,
-                  'value':value}
 
-        return render(request,'login.html',data)
+    def post(self, request):
+        phone = request.POST.get('phone')
+        password = request.POST.get('password')
+
+        error_message = None
+        value = {
+            'phone': phone
+        }
+
+        customer = Customer.objects.filter(phone=phone).first()
+
+        if customer:
+            if check_password(password, customer.password):
+                request.session['customer_id'] = customer.id
+                request.session['phone'] = customer.phone
+                return redirect("homepage")
+            else:
+                error_message = "Incorrect password"
+        else:
+            error_message = "Mobile number is not registered"
+
+        data = {
+            'error': error_message,
+            'value': value
+        }
+        return render(request, 'login.html', data)
+
     
 def productdetail(request,pk):
     totalitem=0
