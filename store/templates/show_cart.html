@@ -270,7 +270,13 @@ body {
                             <a href="{% url 'plus_cart' item.product.id '-' %}">
                             <input type="button" pid="{{item.product.id}}" class="minus-cart btn btn-primary btn-sm" value="-">
                             </a>
-                            <span class="btn btn-light btn-sm" id="quantity">{{item.quantity}}</span>
+                            <input type="number"
+                                class="form-control form-control-sm text-center qty-input"
+                                value="{{ item.quantity }}"
+                                min="1"
+                                pid="{{ item.product.id }}"
+                                style="width:60px;">
+
                             <a href="{% url 'plus_cart' item.product.id '+' %}">
                             <input type="button" pid="{{item.product.id}}" class="plus-cart btn btn-primary btn-sm" value="+">
                             </a>
@@ -378,5 +384,29 @@ $(document).on('click', '.remove-cart', function () {
     });
 });
 </script>
+<script>
+$(document).on('click', '.qty-input', function () {
+    var qty = $(this).val();
+    var pid = $(this).attr("pid");
+
+    if (qty < 1 || qty === "") {
+        qty = 1;
+        $(this).val(1);
+    }
+
+    $.ajax({
+        url: "{% url 'update_cart_quantity' %}",
+        type: "GET",
+        data: {
+            prod_id: pid,
+            quantity: qty
+        },
+        success: function (response) {
+            console.log("Quantity updated");
+        }
+    });
+});
+</script>
+
 
 {% endblock %}

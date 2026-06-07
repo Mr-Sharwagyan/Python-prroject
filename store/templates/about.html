@@ -12,6 +12,33 @@
     position: relative;
     text-align: center;
     box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    overflow: hidden;
+}
+
+/* HERO VIDEO */
+.about-hero video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* VIDEO OVERLAY */
+.video-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1;
+}
+
+/* HERO CONTENT */
+.hero-content {
+    position: relative;
+    z-index: 3;
 }
 
 .about-hero::before {
@@ -21,6 +48,7 @@
     background: radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 70%);
     pointer-events: none;
     animation: glow 8s ease-in-out infinite alternate;
+    z-index: 2;
 }
 
 @keyframes glow {
@@ -164,6 +192,7 @@
     .about-hero h1 { font-size: 2.5rem; }
     .about-section h3 { font-size: 1.7rem; }
     .about-card { padding: 25px 15px; }
+    .about-hero video { display: none; }
 }
 </style>
 
@@ -171,8 +200,18 @@
 
     <!-- HERO SECTION -->
     <div class="about-hero text-center">
-        <h1>About MachhaBazaar</h1>
-        <p>Your trusted online marketplace for aquarium fishes and accessories</p>
+
+        <video autoplay muted loop playsinline>
+            <source src="{% static 'videos/about-bg.mp4' %}" type="video/mp4">
+        </video>
+
+        <div class="video-overlay"></div>
+
+        <div class="hero-content">
+            <h1>About MachhaBazaar</h1>
+            <p>Your trusted online marketplace for aquarium fishes and accessories</p>
+        </div>
+
     </div>
 
     <!-- WHO WE ARE -->

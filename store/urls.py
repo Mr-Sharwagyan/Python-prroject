@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path
-# from .views import home,signup,login
+# from .views import home,signup,login,
 from store import views
 urlpatterns = [
     path('',views.home,name='homepage'),
+    # path('user-home/',views.UserHome.as_view(), name='user_home'),
     path('signup',views.Signup.as_view(),name='signup'),
     path('login',views.Login.as_view(),name='login'),
     path('product-detail/<int:pk>',views.productdetail,name='product-detail'),
@@ -17,7 +18,9 @@ urlpatterns = [
     path('order',views.order,name='order'),
     path('search',views.search,name='search'),
     path('clear-orders', views.clear_orders, name='clear-orders'),
-    path('about',views.about,name='about')
+    path('about',views.about,name='about'),
+    path('update-cart-quantity/', views.update_cart_quantity, name='update_cart_quantity'),
+
 
     
 ]

@@ -18,35 +18,35 @@ from django.http import JsonResponse
 
 def home(request):
     totalitem = 0
-    name=""
-    if request.session.has_key('phone'):
+    name = ""
+    
+    # Check if user is logged in
+    if request.session.get('phone'):
         phone = request.session["phone"]
-
-        category = Category.get_all_categories()
         customer = Customer.objects.filter(phone=phone)
         totalitem = len(Cart.objects.filter(phone=phone))
 
-        categoryID = request.GET.get('category')
+        # Get customer name if exists
+        if customer.exists():
+            name = customer[0].name
 
-        if categoryID:
-            products = Product.get_all_product_by_category_id(categoryID)
-        else:
-            products = Product.get_all_products()
+    # Get categories and products
+    category = Category.get_all_categories()
+    categoryID = request.GET.get('category')
 
-        for c in customer:
-            name = c.name
-
-        data = {
-            'name': name,
-            'product': products,
-            'category': category,
-            'totalitem': totalitem
-        }
-
-        return render(request, 'home.html', data)
-
+    if categoryID:
+        products = Product.get_all_product_by_category_id(categoryID)
     else:
-        return redirect('login')
+        products = Product.get_all_products()
+
+    data = {
+        'name': name,
+        'product': products,
+        'category': category,
+        'totalitem': totalitem
+    }
+
+    return render(request, 'home.html', data)
 
 class Signup(View):
     def get(self, request):
@@ -380,3 +380,19 @@ def about(request):
         return render(request,'about.html',data)
     else:
         return redirect('login')
+def update_cart_quantity(request):
+    if request.method == "GET":
+        prod_id = request.GET.get('prod_id')
+        qty = request.GET.get('quantity')
+
+        cart_item = Cart.objects.get(product_id=prod_id, user=request.user)
+        cart_item.quantity = qty
+        cart_item.save()
+
+        return JsonResponse({'status': 'updated'})
+    
+# class UserHome(View):
+#     def get(self, request):
+#         if not request.session.get('customer_id'):
+#             return redirect('login')   
+#         return render(request, 'user_home.html')
